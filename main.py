@@ -38,7 +38,7 @@ class DataSystem:
 
   # The GetTitle method
   def GetTitle(self, text):
-    with open('thql_dm_words.json', 'r', encoding='utf8',errors='ignore') as f:
+    with open('WordsToRemove.json', 'r', encoding='utf8',errors='ignore') as f:
       data = str(f.read())
     data_list = json.loads(data)
     data = data_list["Arabic_And_English_Words"]
