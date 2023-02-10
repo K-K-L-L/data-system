@@ -82,7 +82,7 @@ class DataSystem:
       website_text = website_text.replace("\n", "")
       website_text = website_text.replace("\\t", "")
       website_text = website_text.strip()
-    # The data that's gonna be in the JSON file (UNFINISHED)
+    # The data that's gonna be in the JSON file (FINISHED)
     data = {
       "title" : title,
       "text": website_text,
@@ -131,20 +131,14 @@ class DataSystem:
         data_elements = soup.find_all('p')
         # Extract the text content of each data element
         data = [element.text for element in data_elements]
-        # Return the extracted data
-
-        # # # return f"DATA_HERE0000: {data}"
-
+        # Uses the SaveData method in the DataSystem class to save the data
         data = self.SaveData(f"{data}", None, "example2", ".json", f"{url}", True)
     else:
         # Return an error message if the request was not successful
         return f'Failed to retrieve data from URL (status code: {response.status_code})'
-
-
-
-
-
-
+      
+      
+      
   def FindAllLinks(self, url):
     links = []
     response = requests.get(url)
@@ -164,10 +158,6 @@ class DataSystem:
         return links
     except Exception as e:
         print(f"Errror: {e}")
-
-
-
-
 
 
 
