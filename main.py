@@ -77,6 +77,11 @@ class DataSystem:
       pass
     else:
       title = self.GetTitle(website_text)
+      website_text = website_text.lower()
+      website_text = website_text.replace("\\n", "")
+      website_text = website_text.replace("\n", "")
+      website_text = website_text.replace("\\t", "")
+      website_text = website_text.strip()
     # The data that's gonna be in the JSON file (UNFINISHED)
     data = {
       "title" : title,
@@ -137,32 +142,38 @@ class DataSystem:
 
 
   def WebCrawler(self, url):
+    # Make a request to the website
     response = requests.get(url)
 
     soup = BeautifulSoup(response.text, 'html.parser')
 
     links = []
-
+    # Get all the links on the page
     for link in soup.find_all("a"):
         link_url = link.get("href")
         # Slows down the program so it doesn't crash
         time.sleep(0.01)
+        # Appends the to make it usable
         link_url = url + link_url
-        # links.append(link_url)
     try:
         for link in links:
-            # print(f"LINK: {link}")
+            # Check if the request was successful
             if response.status_code == 200:
+                # Appends the link_url to the list
                 links.append(link_url)
+                # Slows down the program so your IP doesn't get banned (For saftey)
                 time.sleep(0.001)
+    # Catches the error (If there's an error)
     except Exception as e:
+        # prints the Error | Example: Error: (The error will appear here)
         print(f"Errror: {e}")
+
 
 
 
 dt = DataSystem()
 text = "This is a sample text. This text can be summarized. The goal of summarization is to keep the most important information."
-language = "en"
+
 ratio = 0.5
 
 # Uses the SummarizeText method in the DataSystem class to summarize the text
