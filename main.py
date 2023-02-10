@@ -1,9 +1,12 @@
 # Imports
 import json
-from langdetect import detect
 import nltk
 import random
 from datetime import datetime
+import requests
+from bs4 import BeautifulSoup
+import time
+
 # The list for the punctuation marks
 list2 = ["؟", "،", "!", "?", "¿", ".", ","]
 
@@ -45,6 +48,9 @@ class DataSystem:
     words = text.split()
     text = ' '.join(words[:10])
     text = text.lower()
+    text = text.replace("\\n", """
+    """)
+    text = text.replace("\\t", """    """)
     text = ' '.join([word for word in text.split() if word not in data])
     for word in list2:
       if word in list2:
@@ -107,7 +113,52 @@ class DataSystem:
       else:
         if debug:
           print("Data written to the file successfully!")
- 
+
+
+  def WebScraper(self, url):
+    # Make a GET request to the specified URL
+    response = requests.get(url)
+    # Check if the request was successful
+    if response.status_code == 200:
+        # Use BeautifulSoup to parse the HTML content
+        soup = BeautifulSoup(response.text, 'html.parser')
+        # Find the desired data elements on the page
+        data_elements = soup.find_all('p')
+        # Extract the text content of each data element
+        data = [element.text for element in data_elements]
+        # Return the extracted data
+
+        # # # return f"DATA_HERE0000: {data}"
+
+        data = self.SaveData(f"{data}", None, "example2", ".json", f"{url}", True)
+    else:
+        # Return an error message if the request was not successful
+        return f'Failed to retrieve data from URL (status code: {response.status_code})'
+
+
+  def WebCrawler(self, url):
+    response = requests.get(url)
+
+    soup = BeautifulSoup(response.text, 'html.parser')
+
+    links = []
+
+    for link in soup.find_all("a"):
+        link_url = link.get("href")
+        # Slows down the program so it doesn't crash
+        time.sleep(0.01)
+        link_url = url + link_url
+        # links.append(link_url)
+    try:
+        for link in links:
+            # print(f"LINK: {link}")
+            if response.status_code == 200:
+                links.append(link_url)
+                time.sleep(0.001)
+    except Exception as e:
+        print(f"Errror: {e}")
+
+
 
 dt = DataSystem()
 text = "This is a sample text. This text can be summarized. The goal of summarization is to keep the most important information."
@@ -120,3 +171,5 @@ print(dt.SummarizeText(text, ratio))
 print(dt.GetTitle(text))
 # Uses the SaveData method in the DataSystem class to save the data
 print(dt.SaveData("example text", None, "example", ".json", None, True))
+# Uses the WebScraper method in the DataSystem class to scrape the URL and then uses all of the methods
+print(dt.WebScraper("https://ar.wikipedia.org"))
