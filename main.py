@@ -82,7 +82,7 @@ class DataSystem:
       website_text = website_text.replace("\n", "")
       website_text = website_text.replace("\\t", "")
       website_text = website_text.strip()
-    # The data that's gonna be in the JSON file (FINISHED)
+    # The data that's gonna be in the JSON file (UNFINISHED)
     data = {
       "title" : title,
       "text": website_text,
@@ -131,46 +131,49 @@ class DataSystem:
         data_elements = soup.find_all('p')
         # Extract the text content of each data element
         data = [element.text for element in data_elements]
-        # Uses the SaveData method in the DataSystem class to save the data
+        # Return the extracted data
+
+        # # # return f"DATA_HERE0000: {data}"
+
         data = self.SaveData(f"{data}", None, "example2", ".json", f"{url}", True)
     else:
         # Return an error message if the request was not successful
         return f'Failed to retrieve data from URL (status code: {response.status_code})'
 
 
-  def WebCrawler(self, url):
-    # Make a request to the website
+
+
+
+
+  def FindAllLinks(self, url):
+    links = []
     response = requests.get(url)
 
     soup = BeautifulSoup(response.text, 'html.parser')
 
-    links = []
-    # Get all the links on the page
     for link in soup.find_all("a"):
         link_url = link.get("href")
-        # Slows down the program so it doesn't crash
         time.sleep(0.01)
-        # Appends the to make it usable
         link_url = url + link_url
+        links.append(link_url)
     try:
         for link in links:
-            # Check if the request was successful
             if response.status_code == 200:
-                # Appends the link_url to the list
-                links.append(link_url)
-                # Slows down the program so your IP doesn't get banned (For saftey)
                 time.sleep(0.001)
-    # Catches the error (If there's an error)
+        # Returns the links
+        return links
     except Exception as e:
-        # prints the Error | Example: Error: (The error will appear here)
         print(f"Errror: {e}")
+
+
+
 
 
 
 
 dt = DataSystem()
 text = "This is a sample text. This text can be summarized. The goal of summarization is to keep the most important information."
-
+language = "en"
 ratio = 0.5
 
 # Uses the SummarizeText method in the DataSystem class to summarize the text
@@ -181,3 +184,5 @@ print(dt.GetTitle(text))
 print(dt.SaveData("example text", None, "example", ".json", None, True))
 # Uses the WebScraper method in the DataSystem class to scrape the URL and then uses all of the methods
 print(dt.WebScraper("https://ar.wikipedia.org"))
+# Uses the FindAllLinks method in the DataSystem class to find all the links on the URL and returns the value
+print(dt.FindAllLinks("https://en.wikipedia.org"))
